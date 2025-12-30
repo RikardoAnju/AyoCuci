@@ -6,6 +6,7 @@ import 'tambahKaryawan.dart';
 import 'bottomNav.dart';
 import 'tambahPelanggan.dart';
 import 'pengeluaran.dart';
+import 'laporanPage.dart';
 import 'package:intl/intl.dart';
 
 class LaundryHomePage extends StatefulWidget {
@@ -324,9 +325,9 @@ class _LaundryHomePageState extends State<LaundryHomePage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    _buildBalanceChip('Penjualan : 2.000.000'),
+                    _buildBalanceChip('Penjualan : 2Jt'),
                     const SizedBox(width: 8),
-                    _buildBalanceChip('Pengeluaran : 8.000.000'),
+                    _buildBalanceChip('Pengeluaran : 8Jt'),
                     const SizedBox(width: 8),
                     _buildBalanceChip('Transaksi : 120'),
                   ],
@@ -363,10 +364,7 @@ class _LaundryHomePageState extends State<LaundryHomePage> {
       {'image': 'assets/images/pelanggan.png', 'label': 'Pelanggan'},
       {'image': 'assets/images/karyawan.png', 'label': 'Karyawan'},
       {'image': 'assets/images/transaksi.png', 'label': 'Transaksi'},
-      {
-        'image': 'assets/images/laporanKeuangan.png',
-        'label': 'Laporan Keuangan',
-      },
+      {'image': 'assets/images/laporanKeuangan.png', 'label': 'Laporan'},
       {'image': 'assets/images/outlet.png', 'label': 'Manage Outlet'},
     ];
 
@@ -411,6 +409,11 @@ class _LaundryHomePageState extends State<LaundryHomePage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (_) => const CustomerPage()),
+                );
+              } else if (label == 'Laporan') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const LaporanPage()),
                 );
               }
             },
