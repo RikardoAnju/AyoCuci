@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -11,7 +12,8 @@ class KaryawanPage extends StatefulWidget {
 }
 
 class _KaryawanPageState extends State<KaryawanPage> {
-  final String _baseUrl = 'http://localhost:8080/v1';
+  final String _baseUrl =
+      dotenv.env['BASE_URL_DEV'] ?? 'http://localhost:8080/v1';
   List<Map<String, dynamic>> karyawanList = [];
   bool _isLoading = false;
   String? _accessToken;

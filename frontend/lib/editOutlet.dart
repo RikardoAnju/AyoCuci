@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
@@ -38,7 +39,8 @@ class _EditOutletPageState extends State<EditOutletPage> {
   final ImagePicker _picker = ImagePicker();
 
   // Base URL untuk API
-  final String _baseUrl = 'http://localhost:8080/v1';
+  final String _baseUrl =
+      dotenv.env['BASE_URL_DEV'] ?? 'http://localhost:8080/v1';
   String? _accessToken;
   String? _initialImageUrl;
 
@@ -731,9 +733,8 @@ class _EditOutletPageState extends State<EditOutletPage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => PaymentMethodPage(
-                        outletId: widget.outletId,
-                      ),
+                      builder: (context) =>
+                          PaymentMethodPage(outletId: widget.outletId),
                     ),
                   );
                 },

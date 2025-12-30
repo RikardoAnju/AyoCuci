@@ -31,7 +31,7 @@ class _LoginScreenState extends State<LoginScreen>
   late Animation<Offset> _slideAnimation;
   late GoogleSignIn _googleSignIn;
 
-  final String _baseUrl = 'http://localhost:8080/v1';
+  final String _baseUrl = dotenv.env['BASE_URL_DEV'] ?? 'http://localhost:8080';
 
   @override
   void initState() {
@@ -679,7 +679,10 @@ class _LoginScreenState extends State<LoginScreen>
         ),
         filled: true,
         fillColor: Colors.grey[50],
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 16,
+        ),
       ),
       validator: (value) {
         if (value == null || value.isEmpty) {
@@ -724,7 +727,10 @@ class _LoginScreenState extends State<LoginScreen>
         ),
         filled: true,
         fillColor: Colors.grey[50],
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 16,
+        ),
       ),
       validator: (value) {
         if (value == null || value.isEmpty) {
@@ -761,10 +767,7 @@ class _LoginScreenState extends State<LoginScreen>
             const SizedBox(width: 8),
             Text(
               'Ingat Saya',
-              style: TextStyle(
-                color: Colors.grey[700],
-                fontSize: 14,
-              ),
+              style: TextStyle(color: Colors.grey[700], fontSize: 14),
             ),
           ],
         ),
@@ -878,8 +881,11 @@ class _LoginScreenState extends State<LoginScreen>
               )
             : Image.asset(
                 'assets/images/google.png',
-                errorBuilder: (context, error, stackTrace) =>
-                    const Icon(Icons.g_mobiledata, color: Color(0xFF4285F4), size: 28),
+                errorBuilder: (context, error, stackTrace) => const Icon(
+                  Icons.g_mobiledata,
+                  color: Color(0xFF4285F4),
+                  size: 28,
+                ),
                 height: 24,
                 width: 24,
               ),
@@ -903,20 +909,17 @@ class _LoginScreenState extends State<LoginScreen>
         children: [
           Text(
             'Belum punya akun? ',
-            style: TextStyle(
-              color: Colors.grey[700],
-              fontSize: 14,
-            ),
+            style: TextStyle(color: Colors.grey[700], fontSize: 14),
           ),
           TextButton(
             onPressed: _isLoading
                 ? null
                 : () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const RegisterScreen(),
-                      ),
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const RegisterScreen(),
                     ),
+                  ),
             style: TextButton.styleFrom(
               padding: EdgeInsets.zero,
               minimumSize: const Size(0, 0),

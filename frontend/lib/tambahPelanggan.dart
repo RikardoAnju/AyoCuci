@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -12,7 +13,8 @@ class CustomerPage extends StatefulWidget {
 }
 
 class _CustomerPageState extends State<CustomerPage> {
-  final String _baseUrl = 'http://localhost:8080/v1';
+  final String _baseUrl =
+      dotenv.env['BASE_URL_DEV'] ?? 'http://localhost:8080/v1';
   List<Map<String, dynamic>> _customers = [];
   bool _isLoading = false;
   String? _token;
@@ -54,16 +56,20 @@ class _CustomerPageState extends State<CustomerPage> {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         final rawData = data['data'] ?? [];
-        
+
         setState(() {
-          _customers = List<Map<String, dynamic>>.from(rawData.map((item) => {
-            'id': item['cust_id'],
-            'nama': item['cust_nama'],
-            'phone': item['cust_phone'],
-            'alamat': item['cust_alamat'],
-            'gender': item['cust_gender'],
-            'tanggal_lahir': item['cust_tanggal_lahir'],
-          }));
+          _customers = List<Map<String, dynamic>>.from(
+            rawData.map(
+              (item) => {
+                'id': item['cust_id'],
+                'nama': item['cust_nama'],
+                'phone': item['cust_phone'],
+                'alamat': item['cust_alamat'],
+                'gender': item['cust_gender'],
+                'tanggal_lahir': item['cust_tanggal_lahir'],
+              },
+            ),
+          );
           _isLoading = false;
         });
       } else {
@@ -168,7 +174,7 @@ class _CustomerPageState extends State<CustomerPage> {
 
     // Clean phone number
     String cleanPhone = phoneNumber.replaceAll(RegExp(r'[^0-9]'), '');
-    
+
     // Add country code if not exists (Indonesia +62)
     if (cleanPhone.startsWith('0')) {
       cleanPhone = '62${cleanPhone.substring(1)}';
@@ -232,7 +238,9 @@ class _CustomerPageState extends State<CustomerPage> {
     final phoneCtrl = TextEditingController(text: customer?['phone'] ?? '');
     final addressCtrl = TextEditingController(text: customer?['alamat'] ?? '');
     String selectedGender = customer?['gender'] ?? 'Pria';
-    final birthDateCtrl = TextEditingController(text: customer?['tanggal_lahir'] ?? '');
+    final birthDateCtrl = TextEditingController(
+      text: customer?['tanggal_lahir'] ?? '',
+    );
 
     showDialog(
       context: context,
@@ -242,7 +250,10 @@ class _CustomerPageState extends State<CustomerPage> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
-          insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+          insetPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 40,
+          ),
           backgroundColor: Colors.white,
           child: Container(
             width: double.infinity,
@@ -256,9 +267,7 @@ class _CustomerPageState extends State<CustomerPage> {
                 // Header
                 Container(
                   padding: const EdgeInsets.fromLTRB(20, 16, 16, 16),
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                  ),
+                  decoration: const BoxDecoration(color: Colors.white),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -275,7 +284,11 @@ class _CustomerPageState extends State<CustomerPage> {
                         borderRadius: BorderRadius.circular(20),
                         child: const Padding(
                           padding: EdgeInsets.all(4),
-                          child: Icon(Icons.close, size: 20, color: Colors.black87),
+                          child: Icon(
+                            Icons.close,
+                            size: 20,
+                            color: Colors.black87,
+                          ),
                         ),
                       ),
                     ],
@@ -297,7 +310,7 @@ class _CustomerPageState extends State<CustomerPage> {
                           showLabel: false,
                         ),
                         const SizedBox(height: 16),
-                        
+
                         // No WhatsApp
                         _buildLabel('*No Whatsapp (Kirim Nota)'),
                         const SizedBox(height: 8),
@@ -318,7 +331,9 @@ class _CustomerPageState extends State<CustomerPage> {
                                 onPressed: () => _checkWhatsApp(phoneCtrl.text),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: const Color(0xFF4CAF50),
-                                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 20,
+                                  ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8),
                                   ),
@@ -337,7 +352,7 @@ class _CustomerPageState extends State<CustomerPage> {
                           ],
                         ),
                         const SizedBox(height: 16),
-                        
+
                         // Alamat
                         _buildLabel('Alamat'),
                         const SizedBox(height: 8),
@@ -347,7 +362,7 @@ class _CustomerPageState extends State<CustomerPage> {
                           showLabel: false,
                         ),
                         const SizedBox(height: 16),
-                        
+
                         // Jenis Kelamin
                         _buildLabel('*Jenis Kelamin'),
                         const SizedBox(height: 8),
@@ -360,18 +375,26 @@ class _CustomerPageState extends State<CustomerPage> {
                                 },
                                 borderRadius: BorderRadius.circular(4),
                                 child: Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 6),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 6,
+                                  ),
                                   child: Row(
                                     children: [
                                       Radio<String>(
                                         value: 'Pria',
                                         groupValue: selectedGender,
                                         onChanged: (value) {
-                                          setDialogState(() => selectedGender = value!);
+                                          setDialogState(
+                                            () => selectedGender = value!,
+                                          );
                                         },
                                         activeColor: const Color(0xFFFF5252),
-                                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                        visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
+                                        materialTapTargetSize:
+                                            MaterialTapTargetSize.shrinkWrap,
+                                        visualDensity: const VisualDensity(
+                                          horizontal: -4,
+                                          vertical: -4,
+                                        ),
                                       ),
                                       const SizedBox(width: 8),
                                       const Text(
@@ -389,22 +412,32 @@ class _CustomerPageState extends State<CustomerPage> {
                             Expanded(
                               child: InkWell(
                                 onTap: () {
-                                  setDialogState(() => selectedGender = 'Wanita');
+                                  setDialogState(
+                                    () => selectedGender = 'Wanita',
+                                  );
                                 },
                                 borderRadius: BorderRadius.circular(4),
                                 child: Padding(
-                                  padding: const EdgeInsets.symmetric(vertical: 6),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 6,
+                                  ),
                                   child: Row(
                                     children: [
                                       Radio<String>(
                                         value: 'Wanita',
                                         groupValue: selectedGender,
                                         onChanged: (value) {
-                                          setDialogState(() => selectedGender = value!);
+                                          setDialogState(
+                                            () => selectedGender = value!,
+                                          );
                                         },
                                         activeColor: const Color(0xFFFF5252),
-                                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                        visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
+                                        materialTapTargetSize:
+                                            MaterialTapTargetSize.shrinkWrap,
+                                        visualDensity: const VisualDensity(
+                                          horizontal: -4,
+                                          vertical: -4,
+                                        ),
                                       ),
                                       const SizedBox(width: 8),
                                       const Text(
@@ -422,7 +455,7 @@ class _CustomerPageState extends State<CustomerPage> {
                           ],
                         ),
                         const SizedBox(height: 16),
-                        
+
                         // Tanggal Lahir
                         _buildLabel('Tanggal Lahir'),
                         const SizedBox(height: 8),
@@ -537,10 +570,7 @@ class _CustomerPageState extends State<CustomerPage> {
         style: const TextStyle(fontSize: 13, color: Colors.black87),
         decoration: InputDecoration(
           hintText: hint,
-          hintStyle: TextStyle(
-            color: Colors.grey[400],
-            fontSize: 13,
-          ),
+          hintStyle: TextStyle(color: Colors.grey[400], fontSize: 13),
           filled: true,
           fillColor: Colors.white,
           contentPadding: const EdgeInsets.symmetric(
@@ -631,81 +661,80 @@ class _CustomerPageState extends State<CustomerPage> {
                     child: CircularProgressIndicator(color: Color(0xFFFF6B6B)),
                   )
                 : _filteredCustomers.isEmpty
-                    ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.person_outline,
-                              size: 80,
-                              color: Colors.grey[300],
-                            ),
-                            const SizedBox(height: 16),
-                            Text(
-                              'Belum ada data pelanggan',
-                              style: TextStyle(color: Colors.grey[600]),
-                            ),
-                          ],
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.person_outline,
+                          size: 80,
+                          color: Colors.grey[300],
                         ),
-                      )
-                    : ListView.builder(
-                        padding: const EdgeInsets.all(16),
-                        itemCount: _filteredCustomers.length,
-                        itemBuilder: (context, index) {
-                          final customer = _filteredCustomers[index];
-                          return Container(
-                            margin: const EdgeInsets.only(bottom: 12),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(12),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Belum ada data pelanggan',
+                          style: TextStyle(color: Colors.grey[600]),
+                        ),
+                      ],
+                    ),
+                  )
+                : ListView.builder(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: _filteredCustomers.length,
+                    itemBuilder: (context, index) {
+                      final customer = _filteredCustomers[index];
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 12),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            backgroundColor: Colors.grey[300],
+                            child: Icon(
+                              Icons.person_outline,
+                              color: Colors.grey[600],
                             ),
-                            child: ListTile(
-                              leading: CircleAvatar(
-                                backgroundColor: Colors.grey[300],
-                                child: Icon(
-                                  Icons.person_outline,
-                                  color: Colors.grey[600],
+                          ),
+                          title: Text(
+                            customer['nama'] ?? '',
+                            style: const TextStyle(fontWeight: FontWeight.w600),
+                          ),
+                          subtitle: Text(
+                            customer['phone'] ?? '',
+                            style: TextStyle(
+                              color: Colors.grey[600],
+                              fontSize: 12,
+                            ),
+                          ),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.edit,
+                                  color: Color(0xFF4CAF50),
+                                ),
+                                onPressed: () =>
+                                    _showCustomerDialog(customer: customer),
+                              ),
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.delete,
+                                  color: Colors.red,
+                                ),
+                                onPressed: () => _showDeleteDialog(
+                                  customer['id'],
+                                  customer['nama'],
                                 ),
                               ),
-                              title: Text(
-                                customer['nama'] ?? '',
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.w600),
-                              ),
-                              subtitle: Text(
-                                customer['phone'] ?? '',
-                                style: TextStyle(
-                                  color: Colors.grey[600],
-                                  fontSize: 12,
-                                ),
-                              ),
-                              trailing: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  IconButton(
-                                    icon: const Icon(
-                                      Icons.edit,
-                                      color: Color(0xFF4CAF50),
-                                    ),
-                                    onPressed: () =>
-                                        _showCustomerDialog(customer: customer),
-                                  ),
-                                  IconButton(
-                                    icon: const Icon(
-                                      Icons.delete,
-                                      color: Colors.red,
-                                    ),
-                                    onPressed: () => _showDeleteDialog(
-                                      customer['id'],
-                                      customer['nama'],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
           ),
           // Bottom Button
           Padding(
